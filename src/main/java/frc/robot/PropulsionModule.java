@@ -113,6 +113,8 @@ public class PropulsionModule {
 
     public boolean driveFromState(SwerveModuleState state, double thrust) {
         // System.out.println(this.turnMotorCanID + " " + state.angle.getDegrees());
+        // Capped speed at 0.1 for testing purposes
+        // Modulo may need to be modified because getDegrees may return value less than -360
         return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1), (state.angle.getDegrees()+360)%360);
     }
 
