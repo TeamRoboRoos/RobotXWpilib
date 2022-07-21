@@ -19,12 +19,20 @@ public class Drivebase {
         this.StarbAft = StarbAft;
     }
 
-    public void drive(ChassisSpeeds chassisSpeeds) {
+    public void drive(ChassisSpeeds chassisSpeeds, double thrust) {
+        chassisSpeeds = speedTolerance(chassisSpeeds);
         moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 
-        PortFwd.driveFromState(moduleStates[0]);
-        StarbFwd.driveFromState(moduleStates[1]);
-        PortAft.driveFromState(moduleStates[2]);
-        StarbAft.driveFromState(moduleStates[3]);
+        PortFwd.driveFromState(moduleStates[0], thrust);
+        StarbFwd.driveFromState(moduleStates[1], thrust);
+        PortAft.driveFromState(moduleStates[2], thrust);
+        StarbAft.driveFromState(moduleStates[3], thrust);
+    }
+
+    private ChassisSpeeds speedTolerance(ChassisSpeeds speeds) {
+        if (Math.abs(speeds.vxMetersPerSecond) < 0.1) speeds.vxMetersPerSecond = 0;
+        if (Math.abs(speeds.vyMetersPerSecond) < 0.1) speeds.vyMetersPerSecond = 0;
+        if (Math.abs(speeds.omegaRadiansPerSecond) < 0.1) speeds.omegaRadiansPerSecond = 0;
+        return speeds;
     }
 }

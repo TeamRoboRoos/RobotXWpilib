@@ -111,9 +111,9 @@ public class PropulsionModule {
         return false;
     }
 
-    public boolean driveFromState(SwerveModuleState state) {
-        System.out.println(this.turnMotorCanID + " " + state.angle.getDegrees());
-        return this.drive(0, state.angle.getDegrees());
+    public boolean driveFromState(SwerveModuleState state, double thrust) {
+        // System.out.println(this.turnMotorCanID + " " + state.angle.getDegrees());
+        return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1), (state.angle.getDegrees()+360)%360);
     }
 
     public boolean rotateMotor(DIRECTION direction, double power) {

@@ -60,11 +60,11 @@ public class Robot extends TimedRobot {
 
     double power = this.m_throtle.getX();
 
-    System.out.println("" + power);
+    // System.out.println("" + power);
 
     //System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
     //System.out.println("" + deg);
-    System.out.println("" + power);
+    // System.out.println("" + power);
 
     try {
       if (this.starbFwd.getState() == PROPULSION_STATE.UNINITIALISED) {
@@ -114,9 +114,9 @@ public class Robot extends TimedRobot {
         this.starbFwd.getState() == PROPULSION_STATE.STOPPED &&
         this.portAft.getState() == PROPULSION_STATE.STOPPED &&
         this.starbAft.getState() == PROPULSION_STATE.STOPPED) {
-          this.drivebase.drive(new ChassisSpeeds(0, 0, 1));
-    }
-    
+          this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getZ()), (m_throtle.getX()+1)/2);
+    }    
+    // System.out.println((m_throtle.getX()+1)/2);
 
     this.starbFwd.update();
     this.portAft.update();
