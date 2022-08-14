@@ -40,6 +40,7 @@ public class PropulsionModule {
     private double tolerance = 0.5;
     private double maxPower = 0.07;
 
+
     // letf is positive
     // right is negative
 
@@ -85,7 +86,7 @@ public class PropulsionModule {
     public boolean drive(double power, double angle) {
 
         // Convert degrees to encoder positions
-
+        power = -power;
         if (angle > 90 && angle < 270) {
             power = -power;
             angle += 180;
@@ -114,8 +115,10 @@ public class PropulsionModule {
     public boolean driveFromState(SwerveModuleState state, double thrust) {
         // System.out.println(this.turnMotorCanID + " " + state.angle.getDegrees());
         // Capped speed at 0.1 for testing purposes
-        // Modulo may need to be modified because getDegrees may return value less than -360
-        return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1), (state.angle.getDegrees()+360)%360);
+
+        //if (thrust > 0.1) thrust = 0.1;
+        return this.drive(thrust, (state.angle.getDegrees()+360)%360);
+        //return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1), (state.angle.getDegrees()+360)%360);
     }
 
     public boolean rotateMotor(DIRECTION direction, double power) {
