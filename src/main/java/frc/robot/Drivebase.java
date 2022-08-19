@@ -39,4 +39,21 @@ public class Drivebase {
             speeds.omegaRadiansPerSecond = 0;
         return speeds;
     }
+
+    public void update() {
+        this.StarbFwd.update();
+        this.PortAft.update();
+        this.PortFwd.update();
+        this.StarbAft.update();
+    }
+
+    public boolean isState(PROPULSION_STATE state) {
+        if (this.PortFwd.getState() == state &&
+                this.StarbFwd.getState() == state &&
+                this.PortAft.getState() == state &&
+                this.StarbAft.getState() == state) {
+            return true;
+        }
+        return false;
+    }
 }

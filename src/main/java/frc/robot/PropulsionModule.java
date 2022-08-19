@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.LinkedList;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -16,6 +18,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 /** Add your docs here. */
 public class PropulsionModule {
+    /**
+     *
+     */
     private int turnMotorCanID;
     private int driveMotorCanID;
 
@@ -45,6 +50,11 @@ public class PropulsionModule {
     private double tolerance = 0.5;
     private double maxPower = 0.07;
 
+    private LinkedList<Double> speeds;
+    private double currentSpeed;
+    private double speedSum;
+    private final int averageNum = 100;
+
     // letf is positive
     // right is negative
 
@@ -73,6 +83,10 @@ public class PropulsionModule {
         config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
         config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
         this.m_driveMotor.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
+
+        this.speeds = new LinkedList<Double>();
+        this.currentSpeed = 0;
+        this.speedSum = 0;
     }
 
     public boolean getLeftLimit() {
@@ -104,7 +118,14 @@ public class PropulsionModule {
         double degreeRatio = this.maxEncoderValue / 180.0;
         target = this.maxEncoderValue - (target * degreeRatio);
 
-        this.m_driveMotor.set(ControlMode.PercentOutput, power);
+        // this.m_driveMotor.set(ControlMode.PercentOutput, power);
+        this.currentSpeed = power;
+
+        try {
+            this.setState(PROPULSION_STATE.DRIVING);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         // if (angle > 90 && angle < 270) target = target - this.maxEncoderValue;
 
@@ -120,7 +141,11 @@ public class PropulsionModule {
     }
 
     private void setPower(double power) {
-
+        this.speeds.offer(power);
+        this.speedSum += power;
+        if (this.speeds.size() > 100) {
+            this.speedSum -= this.speeds.poll();
+        }
     }
 
     public boolean driveFromState(SwerveModuleState state, double thrust) {
@@ -129,7 +154,7 @@ public class PropulsionModule {
         // Modulo may need to be modified because getDegrees may return value less than
         // -360
         return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1),
-                (state.angle.getDegrees() + 360) % 360);
+                (state.angle.getDegrees() % 360 + 360) % 360);
     }
 
     public boolean rotateMotor(DIRECTION direction, double power) {
@@ -218,12 +243,16 @@ public class PropulsionModule {
             case UNINITIALISED:
                 break;
             case STOPPED:
+                this.currentSpeed = 0;
                 break;
             case DRIVING:
+                this.m_driveMotor.set(ControlMode.PercentOutput, this.speedSum / averageNum);
                 break;
             default:
                 break;
         }
+        this.setPower(this.currentSpeed);
+        this.currentSpeed = 0;
     }
 
 }

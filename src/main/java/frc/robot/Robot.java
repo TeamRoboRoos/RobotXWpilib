@@ -100,7 +100,7 @@ public class Robot extends TimedRobot {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
-    
+
     try {
       if (this.starbAft.getState() == PROPULSION_STATE.UNINITIALISED) {
         this.starbAft.setState(PROPULSION_STATE.INITIALISING);
@@ -112,18 +112,12 @@ public class Robot extends TimedRobot {
       System.out.println(e.getMessage());
     }
 
-    if (this.portFwd.getState() == PROPULSION_STATE.STOPPED &&
-        this.starbFwd.getState() == PROPULSION_STATE.STOPPED &&
-        this.portAft.getState() == PROPULSION_STATE.STOPPED &&
-        this.starbAft.getState() == PROPULSION_STATE.STOPPED) {
+    if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
       this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getZ()),
           (m_throtle.getX() + 1) / 2);
-    }    
+    }
     // System.out.println((m_throtle.getX()+1)/2);
 
-    this.starbFwd.update();
-    this.portAft.update();
-    this.portFwd.update();
-    this.starbAft.update();
+    this.drivebase.update();
   }
 }
