@@ -13,15 +13,16 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
 
 /**
- * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
+ * This is a demo program showing the use of the DifferentialDrive class. Runs
+ * the motors with
  * arcade steering.
  */
 public class Robot extends TimedRobot {
 
-
-  //private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
-  //private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
-  //private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+  // private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
+  // private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
+  // private final DifferentialDrive m_robotDrive = new
+  // DifferentialDrive(m_leftMotor, m_rightMotor);
   private final Joystick m_stick = new Joystick(0);
   private final Joystick m_throtle = new Joystick(1);
 
@@ -29,14 +30,15 @@ public class Robot extends TimedRobot {
   private final PropulsionModule portAft = new PropulsionModule(9, 5);
   private final PropulsionModule starbAft = new PropulsionModule(11, 8);
   private final PropulsionModule portFwd = new PropulsionModule(12, 6);
-  private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6), new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+  private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
+      new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
 
   @Override
   public void robotInit() {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    //m_rightMotor.setInverted(true);
+    // m_rightMotor.setInverted(true);
   }
 
   @Override
@@ -44,7 +46,7 @@ public class Robot extends TimedRobot {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
-    //m_robotDrive.arcadeDrive(-m_stick.getY(), m_stick.getX());
+    // m_robotDrive.arcadeDrive(-m_stick.getY(), m_stick.getX());
 
     double deg = 0;
 
@@ -62,8 +64,8 @@ public class Robot extends TimedRobot {
 
     // System.out.println("" + power);
 
-    //System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
-    //System.out.println("" + deg);
+    // System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
+    // System.out.println("" + deg);
     // System.out.println("" + power);
 
     try {
@@ -114,7 +116,8 @@ public class Robot extends TimedRobot {
         this.starbFwd.getState() == PROPULSION_STATE.STOPPED &&
         this.portAft.getState() == PROPULSION_STATE.STOPPED &&
         this.starbAft.getState() == PROPULSION_STATE.STOPPED) {
-          this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getZ()), (m_throtle.getX()+1)/2);
+      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getZ()),
+          (m_throtle.getX() + 1) / 2);
     }    
     // System.out.println((m_throtle.getX()+1)/2);
 

@@ -10,7 +10,8 @@ public class Drivebase {
     private PropulsionModule PortFwd, StarbFwd, PortAft, StarbAft;
     private SwerveModuleState[] moduleStates;
 
-    public Drivebase(Translation2d PortFwdPos, Translation2d StarbFwdPos, Translation2d PortAftPos, Translation2d StarbAftPos,
+    public Drivebase(Translation2d PortFwdPos, Translation2d StarbFwdPos, Translation2d PortAftPos,
+            Translation2d StarbAftPos,
                     PropulsionModule PortFwd, PropulsionModule StarbFwd, PropulsionModule PortAft, PropulsionModule StarbAft) {
         this.kinematics = new SwerveDriveKinematics(PortFwdPos, StarbFwdPos, PortAftPos, StarbAftPos);
         this.PortFwd = PortFwd;
@@ -30,9 +31,12 @@ public class Drivebase {
     }
 
     private ChassisSpeeds speedTolerance(ChassisSpeeds speeds) {
-        if (Math.abs(speeds.vxMetersPerSecond) < 0.1) speeds.vxMetersPerSecond = 0;
-        if (Math.abs(speeds.vyMetersPerSecond) < 0.1) speeds.vyMetersPerSecond = 0;
-        if (Math.abs(speeds.omegaRadiansPerSecond) < 0.1) speeds.omegaRadiansPerSecond = 0;
+        if (Math.abs(speeds.vxMetersPerSecond) < 0.1)
+            speeds.vxMetersPerSecond = 0;
+        if (Math.abs(speeds.vyMetersPerSecond) < 0.1)
+            speeds.vyMetersPerSecond = 0;
+        if (Math.abs(speeds.omegaRadiansPerSecond) < 0.1)
+            speeds.omegaRadiansPerSecond = 0;
         return speeds;
     }
 }

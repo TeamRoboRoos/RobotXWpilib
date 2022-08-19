@@ -26,10 +26,15 @@ public class PropulsionModule {
 
     private TalonSRX m_driveMotor;
 
-    public enum PROPULSION_STATE {DEAD, INITIALISING, UNINITIALISED, STOPPED, DRIVING}
+    public enum PROPULSION_STATE {
+        DEAD, INITIALISING, UNINITIALISED, STOPPED, DRIVING
+    }
+
     private PROPULSION_STATE state;
 
-    public enum DIRECTION {STOPPED, CLOCKWISE, ANTICLOCKWISE}
+    public enum DIRECTION {
+        STOPPED, CLOCKWISE, ANTICLOCKWISE
+    }
 
     private boolean leftInitialised;
     private boolean rightInitialised;
@@ -46,7 +51,7 @@ public class PropulsionModule {
     public PropulsionModule(int turnMotorCanID, int driveMotorCanID) {
         this.state = PROPULSION_STATE.UNINITIALISED;
 
-        this.turnMotorCanID  = turnMotorCanID;
+        this.turnMotorCanID = turnMotorCanID;
         this.driveMotorCanID = driveMotorCanID;
 
         this.m_turningMotor = new CANSparkMax(this.turnMotorCanID, MotorType.kBrushless);
@@ -92,34 +97,43 @@ public class PropulsionModule {
         }
 
         double target = angle + 90;
-        if (target > 360) target = target - 360;
-        if (target == 360) target = 0;
+        if (target > 360)
+            target = target - 360;
+        if (target == 360)
+            target = 0;
         double degreeRatio = this.maxEncoderValue / 180.0;
         target = this.maxEncoderValue - (target * degreeRatio);
 
         this.m_driveMotor.set(ControlMode.PercentOutput, power);
 
-        //if (angle > 90 && angle < 270) target = target - this.maxEncoderValue;
- 
-        //System.out.println("" + angle + " " + target + ":" + this.m_turningMotor.getEncoder().getPosition());
-        
+        // if (angle > 90 && angle < 270) target = target - this.maxEncoderValue;
+
+        // System.out.println("" + angle + " " + target + ":" +
+        // this.m_turningMotor.getEncoder().getPosition());
+
         this.m_turningPidController.setReference(target, CANSparkMax.ControlType.kPosition);
-        if (this.m_turningMotor.getEncoder().getPosition() < target + this.tolerance && 
-            this.m_turningMotor.getEncoder().getPosition() > target - this.tolerance) {
+        if (this.m_turningMotor.getEncoder().getPosition() < target + this.tolerance &&
+                this.m_turningMotor.getEncoder().getPosition() > target - this.tolerance) {
             return true;
         }
         return false;
     }
 
+    private void setPower(double power) {
+
+    }
+
     public boolean driveFromState(SwerveModuleState state, double thrust) {
         // System.out.println(this.turnMotorCanID + " " + state.angle.getDegrees());
         // Capped speed at 0.1 for testing purposes
-        // Modulo may need to be modified because getDegrees may return value less than -360
-        return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1), (state.angle.getDegrees()+360)%360);
+        // Modulo may need to be modified because getDegrees may return value less than
+        // -360
+        return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust, 0.1), -0.1),
+                (state.angle.getDegrees() + 360) % 360);
     }
 
     public boolean rotateMotor(DIRECTION direction, double power) {
-        //if (this.m_turningMotor.
+        // if (this.m_turningMotor.
 
         this.m_turningMotor.getPIDController().setReference(0, com.revrobotics.CANSparkMax.ControlType.kDutyCycle);
 
@@ -128,27 +142,24 @@ public class PropulsionModule {
             if (!this.getRightLimit()) {
                 this.m_turningMotor.set(power);
                 return true;
-            }
-            else {
+            } else {
                 this.m_turningMotor.stopMotor();
                 this.rightInitialised = true;
                 this.m_turningMotor.getEncoder().setPosition(0);
                 return false;
             }
-        }
-        else if (direction == DIRECTION.ANTICLOCKWISE) {
+        } else if (direction == DIRECTION.ANTICLOCKWISE) {
             if (!this.getLeftLimit()) {
                 this.m_turningMotor.set(power);
                 return true;
-            }
-            else {
+            } else {
                 this.m_turningMotor.stopMotor();
                 this.leftInitialised = true;
                 this.maxEncoderValue = this.m_turningMotor.getEncoder().getPosition();
                 return false;
             }
         }
-        
+
         this.m_turningMotor.stopMotor();
         return false;
     }
@@ -160,13 +171,15 @@ public class PropulsionModule {
     /**
      * Changes the state of the propulsion module. The rule is that the propulsion
      * cannot be used unless it has been initalised - if it is unintialised the only
-     * state that can be set is initialisation. Once initialised, other states are 
-     * options, although generally the only two states we will used are to reinitialise
+     * state that can be set is initialisation. Once initialised, other states are
+     * options, although generally the only two states we will used are to
+     * reinitialise
      * or to stop.
+     * 
      * @param state
      * @throws Exception
      */
-    public void setState(PROPULSION_STATE state) throws Exception {      
+    public void setState(PROPULSION_STATE state) throws Exception {
         // 1. We are initialising the propulsion. This can be set at any time.
         if (state == PROPULSION_STATE.INITIALISING) {
             if (this.state != PROPULSION_STATE.INITIALISING) {
@@ -177,32 +190,28 @@ public class PropulsionModule {
         }
 
         // 2. The robot is not initialised and not initialising
-        else if (this.state != PROPULSION_STATE.UNINITIALISED && 
-            this.state != PROPULSION_STATE.INITIALISING) {
+        else if (this.state != PROPULSION_STATE.UNINITIALISED &&
+                this.state != PROPULSION_STATE.INITIALISING) {
             this.state = state;
         }
 
         else if (this.state == PROPULSION_STATE.UNINITIALISED) {
             throw new Exception("Error: Propulsion uninitialised");
-        }
-        else if (this.state == PROPULSION_STATE.INITIALISING) {
+        } else if (this.state == PROPULSION_STATE.INITIALISING) {
             throw new Exception("Error: Propulsion initialising");
-        }
-        else {
+        } else {
             throw new Exception("Error: Unknown error when setting state");
         }
     }
 
     public void update() {
-        switch(this.state) {
+        switch (this.state) {
             case INITIALISING:
                 if (!this.rightInitialised) {
                     this.rotateMotor(DIRECTION.CLOCKWISE, maxPower);
-                }
-                else if (!this.leftInitialised) {
+                } else if (!this.leftInitialised) {
                     this.rotateMotor(DIRECTION.ANTICLOCKWISE, maxPower);
-                }
-                else if (this.drive(0, 0)) {
+                } else if (this.drive(0, 0)) {
                     this.state = PROPULSION_STATE.STOPPED;
                 }
                 break;
