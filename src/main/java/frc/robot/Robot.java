@@ -68,48 +68,8 @@ public class Robot extends TimedRobot {
     // System.out.println("" + deg);
     // System.out.println("" + power);
 
-    try {
-      if (this.starbFwd.getState() == PROPULSION_STATE.UNINITIALISED) {
-        this.starbFwd.setState(PROPULSION_STATE.INITIALISING);
-      }
-      if (this.starbFwd.getState() == PROPULSION_STATE.STOPPED) {
-        // this.starbFwd.drive(power, deg);
-      }
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-
-    try {
-      if (this.portAft.getState() == PROPULSION_STATE.UNINITIALISED) {
-        this.portAft.setState(PROPULSION_STATE.INITIALISING);
-      }
-      if (this.portAft.getState() == PROPULSION_STATE.STOPPED) {
-        // this.portAft.drive(0, deg);
-      }
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-
-    try {
-      if (this.portFwd.getState() == PROPULSION_STATE.UNINITIALISED) {
-        this.portFwd.setState(PROPULSION_STATE.INITIALISING);
-      }
-      if (this.portFwd.getState() == PROPULSION_STATE.STOPPED) {
-        // this.portFwd.drive(0, deg);
-      }
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-
-    try {
-      if (this.starbAft.getState() == PROPULSION_STATE.UNINITIALISED) {
-        this.starbAft.setState(PROPULSION_STATE.INITIALISING);
-      }
-      if (this.starbAft.getState() == PROPULSION_STATE.STOPPED) {
-        // this.starbAft.drive(0, deg);
-      }
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
+    if (m_stick.getRawButtonPressed(0)) {
+      this.drivebase.initialise();
     }
 
     if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {

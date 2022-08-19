@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.PropulsionModule.PROPULSION_STATE;
 
 public class Drivebase {
     private SwerveDriveKinematics kinematics;
@@ -12,7 +13,7 @@ public class Drivebase {
 
     public Drivebase(Translation2d PortFwdPos, Translation2d StarbFwdPos, Translation2d PortAftPos,
             Translation2d StarbAftPos,
-                    PropulsionModule PortFwd, PropulsionModule StarbFwd, PropulsionModule PortAft, PropulsionModule StarbAft) {
+            PropulsionModule PortFwd, PropulsionModule StarbFwd, PropulsionModule PortAft, PropulsionModule StarbAft) {
         this.kinematics = new SwerveDriveKinematics(PortFwdPos, StarbFwdPos, PortAftPos, StarbAftPos);
         this.PortFwd = PortFwd;
         this.StarbFwd = StarbFwd;
@@ -38,6 +39,52 @@ public class Drivebase {
         if (Math.abs(speeds.omegaRadiansPerSecond) < 0.1)
             speeds.omegaRadiansPerSecond = 0;
         return speeds;
+    }
+
+    public void initialise() {
+        try {
+            if (this.StarbFwd.getState() == PROPULSION_STATE.UNINITIALISED) {
+                this.StarbFwd.setState(PROPULSION_STATE.INITIALISING);
+            }
+            if (this.StarbFwd.getState() == PROPULSION_STATE.STOPPED) {
+                // this.starbFwd.drive(power, deg);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            if (this.PortAft.getState() == PROPULSION_STATE.UNINITIALISED) {
+                this.PortAft.setState(PROPULSION_STATE.INITIALISING);
+            }
+            if (this.PortAft.getState() == PROPULSION_STATE.STOPPED) {
+                // this.portAft.drive(0, deg);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            if (this.PortFwd.getState() == PROPULSION_STATE.UNINITIALISED) {
+                this.PortFwd.setState(PROPULSION_STATE.INITIALISING);
+            }
+            if (this.PortFwd.getState() == PROPULSION_STATE.STOPPED) {
+                // this.portFwd.drive(0, deg);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            if (this.StarbAft.getState() == PROPULSION_STATE.UNINITIALISED) {
+                this.StarbAft.setState(PROPULSION_STATE.INITIALISING);
+            }
+            if (this.StarbAft.getState() == PROPULSION_STATE.STOPPED) {
+                // this.starbAft.drive(0, deg);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void update() {
