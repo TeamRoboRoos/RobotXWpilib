@@ -247,12 +247,12 @@ public class PropulsionModule {
                 this.currentSpeed = 0;
                 break;
             case DRIVING:
-                this.m_driveMotor.set(ControlMode.PercentOutput, this.speedSum / averageNum);
                 break;
             default:
                 break;
         }
         this.setPower(this.currentSpeed);
+        this.m_driveMotor.set(ControlMode.PercentOutput, this.speedSum / averageNum);
         this.currentSpeed = 0;
     }
 
