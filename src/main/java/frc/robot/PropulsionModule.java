@@ -53,7 +53,7 @@ public class PropulsionModule {
     private LinkedList<Double> speeds;
     private double currentSpeed;
     private double speedSum;
-    private final int averageNum = 100;
+    private final int averageNum = 40;
 
     // letf is positive
     // right is negative
