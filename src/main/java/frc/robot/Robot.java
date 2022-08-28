@@ -211,7 +211,8 @@ public class Robot extends TimedRobot {
     // System.out.println("" + deg);
     // System.out.println("" + power);
 
-    if (m_stick.getRawButtonPressed(0)) {
+    if (m_stick.getRawButtonPressed(2)) {
+      System.out.println("Initialising");
       this.drivebase.initialise();
     }
 
