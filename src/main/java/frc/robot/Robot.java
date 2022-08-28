@@ -217,7 +217,7 @@ public class Robot extends TimedRobot {
     }
 
     if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
-      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getZ()),
+      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
           (m_throtle.getX() + 1) / 2);
     }
 
