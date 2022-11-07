@@ -90,26 +90,26 @@ public class NavCAN {
         CANData packetd = new CANData();
         ByteBuffer byteBufferd;
 
-        boolean a = can_device.readPacketLatest(ApiClass.TELEMETRY.id | TelemetryIndex.LOCATION.id, packeta);
+        can_device.readPacketLatest(ApiClass.TELEMETRY.id | TelemetryIndex.LOCATION.id, packeta);
         byteBuffera = ByteBuffer.wrap(packeta.data);
         byteBuffera.order(ByteOrder.LITTLE_ENDIAN);
         telemetryData.telem_lat = byteBuffera.getInt() / 10e6f;
         telemetryData.telem_lon = byteBuffera.getInt() / 10e6f;
 
-        boolean b = can_device.readPacketLatest(ApiClass.TELEMETRY.id | TelemetryIndex.METADATA.id, packetb);
+        can_device.readPacketLatest(ApiClass.TELEMETRY.id | TelemetryIndex.METADATA.id, packetb);
         byteBufferb = ByteBuffer.wrap(packetb.data);
         byteBufferb.order(ByteOrder.LITTLE_ENDIAN);
         telemetryData.telem_hdg = byteBufferb.getShort() / 1f;
         telemetryData.telem_spd = byteBufferb.getShort() / 1f;
 
-        boolean c = can_device.readPacketLatest(ApiClass.WAYPOINT.id | WaypointIndex.NAVIGATION.id, packetc);
+        can_device.readPacketLatest(ApiClass.WAYPOINT.id | WaypointIndex.NAVIGATION.id, packetc);
         byteBufferc = ByteBuffer.wrap(packetc.data);
         byteBufferc.order(ByteOrder.LITTLE_ENDIAN);
         navData.wpt_hdg = byteBufferc.getShort() / 1f;
         navData.wpt_dst = byteBufferc.getShort() / 1f;
         navData.cur_hdg = byteBufferc.getShort() / 1f;
 
-        boolean d = can_device.readPacketLatest(ApiClass.WAYPOINT.id | WaypointIndex.OVERRIDES.id, packetd);
+        can_device.readPacketLatest(ApiClass.WAYPOINT.id | WaypointIndex.OVERRIDES.id, packetd);
         byteBufferd = ByteBuffer.wrap(packetd.data);
         byteBufferd.order(ByteOrder.LITTLE_ENDIAN);
         navData.x_spd = byteBufferd.get() / 1f;
