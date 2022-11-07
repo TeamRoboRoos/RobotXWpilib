@@ -31,8 +31,7 @@ public class Robot extends TimedRobot {
 
   private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
   private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
-  private final DifferentialDrive m_robotDrive = new
-  DifferentialDrive(m_leftMotor, m_rightMotor);
+  private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
   private final Joystick m_stick = new Joystick(0);
   private final Joystick m_throtle = new Joystick(1);
 
@@ -56,7 +55,7 @@ public class Robot extends TimedRobot {
   private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
       new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
 
-  private final NavCAN navCAN = new NavCAN(20); //XXX Nav CAN Device ID
+  private final NavCAN navCAN = new NavCAN(20); // XXX Nav CAN Device ID
 
   @Override
   public void robotInit() {
@@ -201,9 +200,13 @@ public class Robot extends TimedRobot {
     this.greenLight.set(true);
     this.amberLight.set(false);
 
-    // NavCAN.NavData navData = navCAN.getNavData(); //TODO Alan+Francis here
-    // this.drivebase.drive(WaypointSeeker.seek(navData), navData.target.sp);
-    // this.drivebase.update();
+    NavCAN.NavData navData = navCAN.getNavData(); // TODO Alan+Francis here
+    if (navData.spd_ovr == 1)
+      this.drivebase.drive(new ChassisSpeeds(navData.y_spd, navData.x_spd, navData.z_spd), 1);
+    else if (navData.spd_ovr == 0)
+      this.drivebase.drive(WaypointSeeker.seek(navData), 1);
+
+    this.drivebase.update();
   }
 
   @Override
