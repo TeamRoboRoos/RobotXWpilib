@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
-//import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-//import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,10 +29,10 @@ public class Robot extends TimedRobot {
 
   AHRS ahrs;
 
-  // private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
-  // private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
-  // private final DifferentialDrive m_robotDrive = new
-  // DifferentialDrive(m_leftMotor, m_rightMotor);
+  private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
+  private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
+  private final DifferentialDrive m_robotDrive = new
+  DifferentialDrive(m_leftMotor, m_rightMotor);
   private final Joystick m_stick = new Joystick(0);
   private final Joystick m_throtle = new Joystick(1);
 
@@ -49,12 +49,12 @@ public class Robot extends TimedRobot {
 
   DigitalInput eStop = new DigitalInput(ESTOP_ID);
 
-  // private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
-  // private final PropulsionModule portAft = new PropulsionModule(9, 5);
-  // private final PropulsionModule starbAft = new PropulsionModule(11, 8);
-  // private final PropulsionModule portFwd = new PropulsionModule(12, 6);
-  // private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
-  //     new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+  private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
+  private final PropulsionModule portAft = new PropulsionModule(9, 5);
+  private final PropulsionModule starbAft = new PropulsionModule(11, 8);
+  private final PropulsionModule portFwd = new PropulsionModule(12, 6);
+  private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
+      new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
 
   private final NavCAN navCAN = new NavCAN(20); //XXX Nav CAN Device ID
 
@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    // m_rightMotor.setInverted(true);
+    m_rightMotor.setInverted(true);
 
     CameraServer.startAutomaticCapture();
 
@@ -215,7 +215,7 @@ public class Robot extends TimedRobot {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
-    // m_robotDrive.arcadeDrive(-m_stick.getY(), m_stick.getX());
+    m_robotDrive.arcadeDrive(-m_stick.getY(), m_stick.getX());
 
     double deg = 0;
 
@@ -239,13 +239,13 @@ public class Robot extends TimedRobot {
 
     if (m_stick.getRawButtonPressed(2)) {
       System.out.println("Initialising");
-      // this.drivebase.initialise();
+      this.drivebase.initialise();
     }
 
-    // if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
-    //   this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
-    //       (m_throtle.getX() + 1) / 2);
-    // }
+    if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
+      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
+          (m_throtle.getX() + 1) / 2);
+    }
 
     // System.out.println(m_stick.getRawAxis(4));
 
@@ -254,6 +254,6 @@ public class Robot extends TimedRobot {
       servoDirecion = -servoDirecion;
     exampleServo.setAngle(servoPosition);
 
-    // this.drivebase.update();
+    this.drivebase.update();
   }
 }
