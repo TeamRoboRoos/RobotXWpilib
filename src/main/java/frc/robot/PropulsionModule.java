@@ -153,9 +153,9 @@ public class PropulsionModule {
         // Capped speed at 0.1 for testing purposes
 
         // if (thrust > 0.1) thrust = 0.1;
-        return this.drive(thrust, (state.angle.getDegrees() % 360 + 360) % 360);
-        // return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust,
-        // 0.1), -0.1), (state.angle.getDegrees()+360)%360);
+        // return this.drive(thrust, (state.angle.getDegrees() % 360 + 360) % 360);
+        return this.drive(Math.max(Math.min(state.speedMetersPerSecond * thrust,
+                1), -1), (state.angle.getDegrees() + 360) % 360);
     }
 
     public boolean rotateMotor(DIRECTION direction, double power) {
