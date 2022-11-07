@@ -49,12 +49,14 @@ public class Robot extends TimedRobot {
 
   DigitalInput eStop = new DigitalInput(ESTOP_ID);
 
-  private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
-  private final PropulsionModule portAft = new PropulsionModule(9, 5);
-  private final PropulsionModule starbAft = new PropulsionModule(11, 8);
-  private final PropulsionModule portFwd = new PropulsionModule(12, 6);
-  private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
-      new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+  // private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
+  // private final PropulsionModule portAft = new PropulsionModule(9, 5);
+  // private final PropulsionModule starbAft = new PropulsionModule(11, 8);
+  // private final PropulsionModule portFwd = new PropulsionModule(12, 6);
+  // private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
+  //     new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+
+  private final NavCAN navCAN = new NavCAN(20); //XXX Nav CAN Device ID
 
   @Override
   public void robotInit() {
@@ -85,6 +87,23 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     this.redLight.set(this.eStop.get());
+    navCAN.refresh_nav_data();
+
+    NavCAN.TelemetryData telemetryData = navCAN.getTelemetryData();
+    SmartDashboard.putNumber("Nav/Telemetry_Lat", telemetryData.telem_lat);
+    SmartDashboard.putNumber("Nav/Telemetry_Lon", telemetryData.telem_lon);
+    SmartDashboard.putNumber("Nav/Telemetry_Heading", telemetryData.telem_hdg);
+    SmartDashboard.putNumber("Nav/Telemetry_Speed", telemetryData.telem_spd);
+
+    NavCAN.NavData navData = navCAN.getNavData();
+    SmartDashboard.putNumber("Nav/Navigation_Cur_Heading", navData.cur_hdg);
+    SmartDashboard.putNumber("Nav/Navigation_Wpt_Headint", navData.wpt_hdg);
+    SmartDashboard.putNumber("Nav/Navigation_Wpt_Dst", navData.wpt_dst);
+    SmartDashboard.putNumber("Nav/Navigation_X_Spd", navData.x_spd);
+    SmartDashboard.putNumber("Nav/Navigation_Y_Spd", navData.y_spd);
+    SmartDashboard.putNumber("Nav/Navigation_Z_Spd", navData.z_spd);
+    SmartDashboard.putNumber("Nav/Navigation_Speed_Override", navData.spd_ovr);
+    SmartDashboard.putNumber("Nav/Navigation_Waypoint_Fin", navData.wpt_fin);
 
     /* Display 6-axis Processed Angle Data */
     SmartDashboard.putBoolean("IMU_Connected", ahrs.isConnected());
@@ -172,12 +191,19 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     this.greenLight.set(false);
     this.amberLight.set(false);
+
+    NavCAN.NavData navData = navCAN.getNavData();
+    // System.out.println(navData.toString());
   }
 
   @Override
   public void autonomousPeriodic() {
     this.greenLight.set(true);
     this.amberLight.set(false);
+
+    // NavCAN.NavData navData = navCAN.getNavData(); //TODO Alan+Francis here
+    // this.drivebase.drive(WaypointSeeker.seek(navData), navData.target.sp);
+    // this.drivebase.update();
   }
 
   @Override
@@ -213,13 +239,13 @@ public class Robot extends TimedRobot {
 
     if (m_stick.getRawButtonPressed(2)) {
       System.out.println("Initialising");
-      this.drivebase.initialise();
+      // this.drivebase.initialise();
     }
 
-    if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
-      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
-          (m_throtle.getX() + 1) / 2);
-    }
+    // if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
+    //   this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
+    //       (m_throtle.getX() + 1) / 2);
+    // }
 
     // System.out.println(m_stick.getRawAxis(4));
 
@@ -228,6 +254,6 @@ public class Robot extends TimedRobot {
       servoDirecion = -servoDirecion;
     exampleServo.setAngle(servoPosition);
 
-    this.drivebase.update();
+    // this.drivebase.update();
   }
 }

@@ -1,34 +1,61 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
 
 public class Drivebase {
+    public enum DriveMode {SWERVE, DIFFERENTIAL} 
+
     private SwerveDriveKinematics kinematics;
+    private DifferentialDriveKinematics kinematics_diff;
     private PropulsionModule PortFwd, StarbFwd, PortAft, StarbAft;
-    private SwerveModuleState[] moduleStates;
+    // private SwerveModuleState[] moduleStates;
 
     public Drivebase(Translation2d PortFwdPos, Translation2d StarbFwdPos, Translation2d PortAftPos,
             Translation2d StarbAftPos,
             PropulsionModule PortFwd, PropulsionModule StarbFwd, PropulsionModule PortAft, PropulsionModule StarbAft) {
         this.kinematics = new SwerveDriveKinematics(PortFwdPos, StarbFwdPos, PortAftPos, StarbAftPos);
+        this.kinematics_diff = new DifferentialDriveKinematics(PortFwdPos.getY() - StarbFwdPos.getY());
+
         this.PortFwd = PortFwd;
         this.StarbFwd = StarbFwd;
         this.PortAft = PortAft;
         this.StarbAft = StarbAft;
     }
 
+    /**
+     * Drive the boat in swerve mode
+     * @param chassisSpeeds A ChassisSpeeds object describing the robot relative direction of travel
+     * @param thrust The power to drive at
+     */
     public void drive(ChassisSpeeds chassisSpeeds, double thrust) {
-        chassisSpeeds = speedTolerance(chassisSpeeds);
-        moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+        drive(chassisSpeeds, thrust, DriveMode.SWERVE);
+    }
 
-        PortFwd.driveFromState(moduleStates[0], thrust);
-        StarbFwd.driveFromState(moduleStates[1], thrust);
-        PortAft.driveFromState(moduleStates[2], thrust);
-        StarbAft.driveFromState(moduleStates[3], thrust);
+    public void drive(ChassisSpeeds chassisSpeeds, double thrust, DriveMode mode) {
+        chassisSpeeds = speedTolerance(chassisSpeeds);
+        
+        if (mode == DriveMode.SWERVE) {
+            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+
+            PortFwd.driveFromState(moduleStates[0], thrust);
+            StarbFwd.driveFromState(moduleStates[1], thrust);
+            PortAft.driveFromState(moduleStates[2], thrust);
+            StarbAft.driveFromState(moduleStates[3], thrust);
+        } else if (mode == DriveMode.DIFFERENTIAL) {
+            DifferentialDriveWheelSpeeds wSpeeds = kinematics_diff.toWheelSpeeds(chassisSpeeds);
+
+            PortFwd.driveFromState(new SwerveModuleState(wSpeeds.leftMetersPerSecond, new Rotation2d()), thrust);
+            PortAft.driveFromState(new SwerveModuleState(wSpeeds.leftMetersPerSecond, new Rotation2d()), thrust);
+            StarbFwd.driveFromState(new SwerveModuleState(wSpeeds.rightMetersPerSecond, new Rotation2d()), thrust);
+            StarbAft.driveFromState(new SwerveModuleState(wSpeeds.rightMetersPerSecond, new Rotation2d()), thrust);
+        }
     }
 
     private ChassisSpeeds speedTolerance(ChassisSpeeds speeds) {

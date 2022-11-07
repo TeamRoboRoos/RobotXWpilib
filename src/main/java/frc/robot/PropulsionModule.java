@@ -44,7 +44,7 @@ public class PropulsionModule {
     private boolean leftInitialised;
     private boolean rightInitialised;
 
-    private double minEncoderValue = 0;
+    // private double minEncoderValue = 0;
     private double maxEncoderValue = 0;
 
     private double tolerance = 0.5;
