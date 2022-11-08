@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
 
     NavCAN.NavData navData = navCAN.getNavData();
     SmartDashboard.putNumber("Nav/Navigation_Cur_Heading", navData.cur_hdg);
-    SmartDashboard.putNumber("Nav/Navigation_Wpt_Headint", navData.wpt_hdg);
+    SmartDashboard.putNumber("Nav/Navigation_Wpt_Heading", navData.wpt_hdg);
     SmartDashboard.putNumber("Nav/Navigation_Wpt_Dst", navData.wpt_dst);
     SmartDashboard.putNumber("Nav/Navigation_X_Spd", navData.x_spd);
     SmartDashboard.putNumber("Nav/Navigation_Y_Spd", navData.y_spd);
