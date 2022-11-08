@@ -10,7 +10,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
 
 public class Drivebase {
-    public enum DriveMode {SWERVE, DIFFERENTIAL} 
+    public enum DriveMode {
+        SWERVE, DIFFERENTIAL
+    }
 
     private SwerveDriveKinematics kinematics;
     private DifferentialDriveKinematics kinematics_diff;
@@ -31,8 +33,10 @@ public class Drivebase {
 
     /**
      * Drive the boat in swerve mode
-     * @param chassisSpeeds A ChassisSpeeds object describing the robot relative direction of travel
-     * @param thrust The power to drive at
+     * 
+     * @param chassisSpeeds A ChassisSpeeds object describing the robot relative
+     *                      direction of travel
+     * @param thrust        The power to drive at
      */
     public void drive(ChassisSpeeds chassisSpeeds, double thrust) {
         drive(chassisSpeeds, thrust, DriveMode.SWERVE);
@@ -40,7 +44,7 @@ public class Drivebase {
 
     public void drive(ChassisSpeeds chassisSpeeds, double thrust, DriveMode mode) {
         chassisSpeeds = speedTolerance(chassisSpeeds);
-        
+
         if (mode == DriveMode.SWERVE) {
             SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 
@@ -129,5 +133,16 @@ public class Drivebase {
             return true;
         }
         return false;
+    }
+
+    public void setState(PROPULSION_STATE state) {
+        try {
+            this.PortFwd.setState(state);
+            this.PortAft.setState(state);
+            this.StarbFwd.setState(state);
+            this.StarbAft.setState(state);
+        } catch (Exception e) {
+
+        }
     }
 }
