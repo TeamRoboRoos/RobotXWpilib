@@ -14,11 +14,11 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+// import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs
@@ -29,9 +29,10 @@ public class Robot extends TimedRobot {
 
   AHRS ahrs;
 
-  private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
-  private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
-  private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
+  // private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
+  // private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
+  // private final DifferentialDrive m_robotDrive = new
+  // DifferentialDrive(m_leftMotor, m_rightMotor);
   private final Joystick m_stick = new Joystick(0);
   private final Joystick m_throtle = new Joystick(1);
 
@@ -62,7 +63,7 @@ public class Robot extends TimedRobot {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_rightMotor.setInverted(true);
+    // m_rightMotor.setInverted(true);
 
     CameraServer.startAutomaticCapture();
 
@@ -191,7 +192,7 @@ public class Robot extends TimedRobot {
     this.greenLight.set(false);
     this.amberLight.set(false);
 
-    NavCAN.NavData navData = navCAN.getNavData();
+    // NavCAN.NavData navData = navCAN.getNavData();
     // System.out.println(navData.toString());
   }
 
@@ -242,6 +243,7 @@ public class Robot extends TimedRobot {
 
     if (m_stick.getRawButtonPressed(2)) {
       System.out.println("Initialising");
+      // this.drivebase.setState(PROPULSION_STATE.UNINITIALISED);
       this.drivebase.initialise();
     }
 
