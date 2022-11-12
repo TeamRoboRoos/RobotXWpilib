@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 //import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 //import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
+import frc.robot.subsystems.WeatherCan;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,6 +29,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   AHRS ahrs;
+
+  private WeatherCan weatherCan;
+
 
   // private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
   // private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
@@ -92,6 +96,8 @@ public class Robot extends TimedRobot {
     } catch (RuntimeException ex) {
       System.out.println("Error instantiating navX MXP:  " + ex.getMessage());
     }
+
+    this.weatherCan = new WeatherCan();
   }
 
   @Override
@@ -178,6 +184,10 @@ public class Robot extends TimedRobot {
     /* Connectivity Debugging Support */
     SmartDashboard.putNumber("IMU_Byte_Count", ahrs.getByteCount());
     SmartDashboard.putNumber("IMU_Update_Count", ahrs.getUpdateCount());
+
+
+    this.weatherCan.update();
+    this.weatherCan.displayData();
   }
 
   @Override
