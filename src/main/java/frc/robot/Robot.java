@@ -50,11 +50,23 @@ public class Robot extends TimedRobot {
   DigitalInput eStop = new DigitalInput(ESTOP_ID);
 
   private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
-  private final PropulsionModule portAft = new PropulsionModule(9, 5);
+
+
+  private final PropulsionModule portAft = new PropulsionModule(12, 5);
+  
   private final PropulsionModule starbAft = new PropulsionModule(11, 8);
-  private final PropulsionModule portFwd = new PropulsionModule(12, 6);
-  private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
-      new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+
+  //Correct
+  private final PropulsionModule portFwd = new PropulsionModule(9, 6);
+
+  // private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
+  //     new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+
+      private final Drivebase drivebase = new Drivebase(
+        new Translation2d(-0.6, 1.10), //portFwd
+        new Translation2d(0.6, 1.10), //starbFwd
+        new Translation2d(-1, -2), //portAft
+        new Translation2d(1, -2), portFwd, starbFwd, portAft, starbAft);
 
   @Override
   public void robotInit() {
@@ -199,17 +211,17 @@ public class Robot extends TimedRobot {
     deg = ((rad * (180 / Math.PI)) * -1) + 90;
     deg = (deg + 360) % 360;
 
-    if (Math.abs(m_stick.getX()) < 0.05 && Math.abs(m_stick.getY()) < 0.05) {
+    if (Math.abs(m_stick.getX()) < 0.05 && Math.abs(m_stick.getY()) < 0.05 && Math.abs(m_stick.getRawAxis(4)) < 0.05) {
       deg = 0;
     }
 
-    // double power = this.m_throtle.getX();
+    double power = this.m_throtle.getX();
 
-    // System.out.println("" + power);
+    System.out.println("" + power);
 
-    // System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
-    // System.out.println("" + deg);
-    // System.out.println("" + power);
+    System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
+    System.out.println("" + deg);
+    System.out.println("" + power);
 
     if (m_stick.getRawButtonPressed(2)) {
       System.out.println("Initialising");
@@ -217,7 +229,7 @@ public class Robot extends TimedRobot {
     }
 
     if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
-      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
+      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), m_stick.getX(), m_stick.getRawAxis(4)),
           (m_throtle.getX() + 1) / 2);
     }
 

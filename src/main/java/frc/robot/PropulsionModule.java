@@ -78,7 +78,10 @@ public class PropulsionModule {
         this.m_rightLimit = this.m_turningMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
         this.m_driveMotor = new TalonSRX(this.driveMotorCanID);
+        this.m_driveMotor.setInverted(false);
+        
         TalonSRXConfiguration config = new TalonSRXConfiguration();
+        
         config.peakCurrentLimit = 40; // the peak current, in amps
         config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
         config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
@@ -104,7 +107,7 @@ public class PropulsionModule {
     public boolean drive(double power, double angle) {
 
         // Convert degrees to encoder positions
-        power = -power;
+        //power = -power;
         if (angle > 90 && angle < 270) {
             power = -power;
             angle += 180;
