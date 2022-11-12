@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
+import frc.robot.subsystems.WeatherCan;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -28,6 +29,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   AHRS ahrs;
+
+  private WeatherCan weatherCan;
+
 
   // private final PWMSparkMax m_leftMotor = new PWMSparkMax(0);
   // private final PWMSparkMax m_rightMotor = new PWMSparkMax(1);
@@ -50,11 +54,23 @@ public class Robot extends TimedRobot {
   DigitalInput eStop = new DigitalInput(ESTOP_ID);
 
   private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
-  private final PropulsionModule portAft = new PropulsionModule(9, 5);
+
+
+  private final PropulsionModule portAft = new PropulsionModule(12, 5);
+  
   private final PropulsionModule starbAft = new PropulsionModule(11, 8);
-  private final PropulsionModule portFwd = new PropulsionModule(12, 6);
-  private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
-      new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+
+  //Correct
+  private final PropulsionModule portFwd = new PropulsionModule(9, 6);
+
+  // private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
+  //     new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
+
+      private final Drivebase drivebase = new Drivebase(
+        new Translation2d(-0.6, 1.10), //portFwd
+        new Translation2d(0.6, 1.10), //starbFwd
+        new Translation2d(-1, -2), //portAft
+        new Translation2d(1, -2), portFwd, starbFwd, portAft, starbAft);
 
   private final NavCAN navCAN = new NavCAN(20); // XXX Nav CAN Device ID
 
@@ -82,6 +98,8 @@ public class Robot extends TimedRobot {
     } catch (RuntimeException ex) {
       System.out.println("Error instantiating navX MXP:  " + ex.getMessage());
     }
+
+    this.weatherCan = new WeatherCan();
   }
 
   @Override
@@ -185,6 +203,10 @@ public class Robot extends TimedRobot {
     /* Connectivity Debugging Support */
     SmartDashboard.putNumber("IMU_Byte_Count", ahrs.getByteCount());
     SmartDashboard.putNumber("IMU_Update_Count", ahrs.getUpdateCount());
+
+
+    this.weatherCan.update();
+    this.weatherCan.displayData();
   }
 
   @Override
@@ -229,17 +251,17 @@ public class Robot extends TimedRobot {
     deg = ((rad * (180 / Math.PI)) * -1) + 90;
     deg = (deg + 360) % 360;
 
-    if (Math.abs(m_stick.getX()) < 0.05 && Math.abs(m_stick.getY()) < 0.05) {
+    if (Math.abs(m_stick.getX()) < 0.05 && Math.abs(m_stick.getY()) < 0.05 && Math.abs(m_stick.getRawAxis(4)) < 0.05) {
       deg = 0;
     }
 
-    // double power = this.m_throtle.getX();
+    double power = this.m_throtle.getX();
 
-    // System.out.println("" + power);
+    System.out.println("" + power);
 
-    // System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
-    // System.out.println("" + deg);
-    // System.out.println("" + power);
+    System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
+    System.out.println("" + deg);
+    System.out.println("" + power);
 
     if (m_stick.getRawButtonPressed(2)) {
       System.out.println("Initialising");
@@ -248,7 +270,7 @@ public class Robot extends TimedRobot {
     }
 
     if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
-      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), -m_stick.getX(), m_stick.getRawAxis(4)),
+      this.drivebase.drive(new ChassisSpeeds(-m_stick.getY(), m_stick.getX(), m_stick.getRawAxis(4)),
           (m_throtle.getX() + 1) / 2);
     }
 

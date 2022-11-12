@@ -15,6 +15,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
 public class PropulsionModule {
@@ -54,6 +55,7 @@ public class PropulsionModule {
     private double currentSpeed;
     private double speedSum;
     private final int averageNum = 40;
+    private double targetAngle = 0;
 
     // letf is positive
     // right is negative
@@ -78,7 +80,10 @@ public class PropulsionModule {
         this.m_rightLimit = this.m_turningMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
         this.m_driveMotor = new TalonSRX(this.driveMotorCanID);
+        this.m_driveMotor.setInverted(false);
+        
         TalonSRXConfiguration config = new TalonSRXConfiguration();
+        
         config.peakCurrentLimit = 40; // the peak current, in amps
         config.peakCurrentDuration = 1500; // the time at the peak current before the limit triggers, in ms
         config.continuousCurrentLimit = 30; // the current to maintain if the peak limit is triggered
@@ -102,9 +107,10 @@ public class PropulsionModule {
     }
 
     public boolean drive(double power, double angle) {
+        this.targetAngle = angle;
 
         // Convert degrees to encoder positions
-        power = -power;
+        //power = -power;
         if (angle > 90 && angle < 270) {
             power = -power;
             angle += 180;
@@ -159,7 +165,6 @@ public class PropulsionModule {
     }
 
     public boolean rotateMotor(DIRECTION direction, double power) {
-        // if (this.m_turningMotor.
 
         this.m_turningMotor.getPIDController().setReference(0, com.revrobotics.CANSparkMax.ControlType.kDutyCycle);
 
@@ -231,6 +236,9 @@ public class PropulsionModule {
     }
 
     public void update() {
+        SmartDashboard.putNumber("" + this.driveMotorCanID + " Angle", this.targetAngle);
+        SmartDashboard.putBoolean("" + this.driveMotorCanID + " Initialised", leftInitialised && rightInitialised);
+
         switch (this.state) {
             case INITIALISING:
                 if (!this.rightInitialised) {

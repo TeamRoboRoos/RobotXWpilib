@@ -23,8 +23,6 @@ public class Drivebase {
             Translation2d StarbAftPos,
             PropulsionModule PortFwd, PropulsionModule StarbFwd, PropulsionModule PortAft, PropulsionModule StarbAft) {
         this.kinematics = new SwerveDriveKinematics(PortFwdPos, StarbFwdPos, PortAftPos, StarbAftPos);
-        this.kinematics_diff = new DifferentialDriveKinematics(PortFwdPos.getY() - StarbFwdPos.getY());
-
         this.PortFwd = PortFwd;
         this.StarbFwd = StarbFwd;
         this.PortAft = PortAft;
@@ -79,6 +77,8 @@ public class Drivebase {
             }
             if (this.StarbFwd.getState() == PROPULSION_STATE.STOPPED) {
                 // this.starbFwd.drive(power, deg);
+            } else if (this.StarbFwd.getState() != PROPULSION_STATE.INITIALISING) {
+                this.StarbFwd.setState(PROPULSION_STATE.INITIALISING);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -90,17 +90,22 @@ public class Drivebase {
             }
             if (this.PortAft.getState() == PROPULSION_STATE.STOPPED) {
                 // this.portAft.drive(0, deg);
+            } else if (this.PortAft.getState() != PROPULSION_STATE.INITIALISING) {
+                this.PortAft.setState(PROPULSION_STATE.INITIALISING);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
+        // Port forward
         try {
             if (this.PortFwd.getState() == PROPULSION_STATE.UNINITIALISED) {
                 this.PortFwd.setState(PROPULSION_STATE.INITIALISING);
             }
             if (this.PortFwd.getState() == PROPULSION_STATE.STOPPED) {
                 // this.portFwd.drive(0, deg);
+            } else if (this.PortFwd.getState() != PROPULSION_STATE.INITIALISING) {
+                this.PortFwd.setState(PROPULSION_STATE.INITIALISING);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -112,6 +117,8 @@ public class Drivebase {
             }
             if (this.StarbAft.getState() == PROPULSION_STATE.STOPPED) {
                 // this.starbAft.drive(0, deg);
+            } else if (this.StarbAft.getState() != PROPULSION_STATE.INITIALISING) {
+                this.StarbAft.setState(PROPULSION_STATE.INITIALISING);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
