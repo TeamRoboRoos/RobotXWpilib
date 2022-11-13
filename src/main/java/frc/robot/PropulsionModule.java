@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -63,6 +64,7 @@ public class PropulsionModule {
     public PropulsionModule(int turnMotorCanID, int driveMotorCanID) {
         this.state = PROPULSION_STATE.UNINITIALISED;
 
+        // config turning motor
         this.turnMotorCanID = turnMotorCanID;
         this.driveMotorCanID = driveMotorCanID;
 
@@ -79,6 +81,10 @@ public class PropulsionModule {
         this.m_leftLimit = this.m_turningMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         this.m_rightLimit = this.m_turningMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 
+        this.m_turningMotor.setIdleMode(IdleMode.kCoast);
+        this.m_turningMotor.burnFlash();
+
+        // Config Propolsion motor
         this.m_driveMotor = new TalonSRX(this.driveMotorCanID);
         this.m_driveMotor.setInverted(false);
         

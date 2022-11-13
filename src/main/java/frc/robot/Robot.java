@@ -53,24 +53,44 @@ public class Robot extends TimedRobot {
 
   DigitalInput eStop = new DigitalInput(ESTOP_ID);
 
-  private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
+  // private final PropulsionModule starbFwd = new PropulsionModule(10, 7);
 
-
-  private final PropulsionModule portAft = new PropulsionModule(12, 5);
+  // private final PropulsionModule portAft = new PropulsionModule(9, 5);
   
-  private final PropulsionModule starbAft = new PropulsionModule(11, 8);
+  // private final PropulsionModule starbAft = new PropulsionModule(11, 8);
 
-  //Correct
-  private final PropulsionModule portFwd = new PropulsionModule(9, 6);
+  // private final PropulsionModule portFwd = new PropulsionModule(12, 6);
+
+  // flip left/right for required movement
+  private final PropulsionModule starbFwd = new PropulsionModule(12, 6);
+
+  private final PropulsionModule portAft = new PropulsionModule(11, 8);
+  
+  private final PropulsionModule starbAft = new PropulsionModule(9, 5);
+
+  private final PropulsionModule portFwd = new PropulsionModule(10, 7);
 
   // private final Drivebase drivebase = new Drivebase(new Translation2d(1.10, 0.6), new Translation2d(1.10, -0.6),
   //     new Translation2d(-2, 1), new Translation2d(-2, -1), portFwd, starbFwd, portAft, starbAft);
 
-      private final Drivebase drivebase = new Drivebase(
-        new Translation2d(-0.6, 1.10), //portFwd
-        new Translation2d(0.6, 1.10), //starbFwd
-        new Translation2d(-1, -2), //portAft
-        new Translation2d(1, -2), portFwd, starbFwd, portAft, starbAft);
+      // private final Drivebase drivebase = new Drivebase(
+      //   new Translation2d(1.10, 0.6),   //portFwd
+      //   new Translation2d(1.10, -0.6),  //starbFwd
+      //   new Translation2d(-2, 1),       //portAft
+      //   new Translation2d(-2, -1),      //starbAft
+      //   portFwd, starbFwd, portAft, starbAft);
+
+        private final Drivebase drivebase = new Drivebase(
+          new Translation2d(1, 1),   //portFwd
+          new Translation2d(1, -1),  //starbFwd
+          new Translation2d(-1, 1),       //portAft
+          new Translation2d(-1, -1),      //starbAft
+          portFwd, starbFwd, portAft, starbAft);
+
+        // new Translation2d(-0.6, 1.10), //portFwd
+        // new Translation2d(0.6, 1.10),  //starbFwd
+        // new Translation2d(-1, -2),     //portAft
+        // new Translation2d(1, -2),      //starbAft
 
   private final NavCAN navCAN = new NavCAN(20); // XXX Nav CAN Device ID
 
@@ -105,6 +125,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     this.redLight.set(this.eStop.get());
+    
     navCAN.refresh_nav_data();
 
     NavCAN.TelemetryData telemetryData = navCAN.getTelemetryData();
@@ -124,11 +145,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Nav/Navigation_Waypoint_Fin", navData.wpt_fin);
 
     /* Display 6-axis Processed Angle Data */
-    SmartDashboard.putBoolean("IMU_Connected", ahrs.isConnected());
+    //SmartDashboard.putBoolean("IMU_Connected", ahrs.isConnected());
     SmartDashboard.putBoolean("IMU_IsCalibrating", ahrs.isCalibrating());
-    SmartDashboard.putNumber("IMU_Yaw", ahrs.getYaw());
-    SmartDashboard.putNumber("IMU_Pitch", ahrs.getPitch());
-    SmartDashboard.putNumber("IMU_Roll", ahrs.getRoll());
+    //SmartDashboard.putNumber("IMU_Yaw", ahrs.getYaw());
+    //SmartDashboard.putNumber("IMU_Pitch", ahrs.getPitch());
+    //SmartDashboard.putNumber("IMU_Roll", ahrs.getRoll());
 
     /* Display tilt-corrected, Magnetometer-based heading (requires */
     /* magnetometer calibration to be useful) */
@@ -136,20 +157,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("IMU_CompassHeading", ahrs.getCompassHeading());
 
     /* Display 9-axis Heading (requires magnetometer calibration to be useful) */
-    SmartDashboard.putNumber("IMU_FusedHeading", ahrs.getFusedHeading());
+    //SmartDashboard.putNumber("IMU_FusedHeading", ahrs.getFusedHeading());
 
     /* These functions are compatible w/the WPI Gyro Class, providing a simple */
     /* path for upgrading from the Kit-of-Parts gyro to the navx MXP */
 
-    SmartDashboard.putNumber("IMU_TotalYaw", ahrs.getAngle());
-    SmartDashboard.putNumber("IMU_YawRateDPS", ahrs.getRate());
+    //SmartDashboard.putNumber("IMU_TotalYaw", ahrs.getAngle());
+    //SmartDashboard.putNumber("IMU_YawRateDPS", ahrs.getRate());
 
     /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) */
 
-    SmartDashboard.putNumber("IMU_Accel_X", ahrs.getWorldLinearAccelX());
-    SmartDashboard.putNumber("IMU_Accel_Y", ahrs.getWorldLinearAccelY());
-    SmartDashboard.putBoolean("IMU_IsMoving", ahrs.isMoving());
-    SmartDashboard.putBoolean("IMU_IsRotating", ahrs.isRotating());
+    //SmartDashboard.putNumber("IMU_Accel_X", ahrs.getWorldLinearAccelX());
+    //SmartDashboard.putNumber("IMU_Accel_Y", ahrs.getWorldLinearAccelY());
+    //SmartDashboard.putBoolean("IMU_IsMoving", ahrs.isMoving());
+    //SmartDashboard.putBoolean("IMU_IsRotating", ahrs.isRotating());
 
     /* Display estimates of velocity/displacement. Note that these values are */
     /* not expected to be accurate enough for estimating robot position on a */
@@ -157,52 +178,52 @@ public class Robot extends TimedRobot {
     /* of these errors due to single (velocity) integration and especially */
     /* double (displacement) integration. */
 
-    SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
-    SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
-    SmartDashboard.putNumber("Displacement_X", ahrs.getDisplacementX());
-    SmartDashboard.putNumber("Displacement_Y", ahrs.getDisplacementY());
+    //SmartDashboard.putNumber("Velocity_X", ahrs.getVelocityX());
+    //SmartDashboard.putNumber("Velocity_Y", ahrs.getVelocityY());
+    //SmartDashboard.putNumber("Displacement_X", ahrs.getDisplacementX());
+    //SmartDashboard.putNumber("Displacement_Y", ahrs.getDisplacementY());
 
     /* Display Raw Gyro/Accelerometer/Magnetometer Values */
     /* NOTE: These values are not normally necessary, but are made available */
     /* for advanced users. Before using this data, please consider whether */
     /* the processed data (see above) will suit your needs. */
 
-    SmartDashboard.putNumber("RawGyro_X", ahrs.getRawGyroX());
-    SmartDashboard.putNumber("RawGyro_Y", ahrs.getRawGyroY());
-    SmartDashboard.putNumber("RawGyro_Z", ahrs.getRawGyroZ());
-    SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
-    SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
-    SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
-    SmartDashboard.putNumber("RawMag_X", ahrs.getRawMagX());
-    SmartDashboard.putNumber("RawMag_Y", ahrs.getRawMagY());
-    SmartDashboard.putNumber("RawMag_Z", ahrs.getRawMagZ());
-    SmartDashboard.putNumber("IMU_Temp_C", ahrs.getTempC());
+    //SmartDashboard.putNumber("RawGyro_X", ahrs.getRawGyroX());
+    //SmartDashboard.putNumber("RawGyro_Y", ahrs.getRawGyroY());
+    //SmartDashboard.putNumber("RawGyro_Z", ahrs.getRawGyroZ());
+    //SmartDashboard.putNumber("RawAccel_X", ahrs.getRawAccelX());
+    //SmartDashboard.putNumber("RawAccel_Y", ahrs.getRawAccelY());
+    //SmartDashboard.putNumber("RawAccel_Z", ahrs.getRawAccelZ());
+    //SmartDashboard.putNumber("RawMag_X", ahrs.getRawMagX());
+    //SmartDashboard.putNumber("RawMag_Y", ahrs.getRawMagY());
+    //SmartDashboard.putNumber("RawMag_Z", ahrs.getRawMagZ());
+    //SmartDashboard.putNumber("IMU_Temp_C", ahrs.getTempC());
 
     /* Omnimount Yaw Axis Information */
     /* For more info, see http://navx-mxp.kauailabs.com/installation/omnimount */
-    AHRS.BoardYawAxis yaw_axis = ahrs.getBoardYawAxis();
-    SmartDashboard.putString("YawAxisDirection", yaw_axis.up ? "Up" : "Down");
-    SmartDashboard.putNumber("YawAxis", yaw_axis.board_axis.getValue());
+    //AHRS.BoardYawAxis yaw_axis = ahrs.getBoardYawAxis();
+    //SmartDashboard.putString("YawAxisDirection", yaw_axis.up ? "Up" : "Down");
+    //SmartDashboard.putNumber("YawAxis", yaw_axis.board_axis.getValue());
 
     /* Sensor Board Information */
-    SmartDashboard.putString("FirmwareVersion", ahrs.getFirmwareVersion());
+    //SmartDashboard.putString("FirmwareVersion", ahrs.getFirmwareVersion());
 
     /* Quaternion Data */
     /* Quaternions are fascinating, and are the most compact representation of */
     /* orientation data. All of the Yaw, Pitch and Roll Values can be derived */
     /* from the Quaternions. If interested in motion processing, knowledge of */
     /* Quaternions is highly recommended. */
-    SmartDashboard.putNumber("QuaternionW", ahrs.getQuaternionW());
-    SmartDashboard.putNumber("QuaternionX", ahrs.getQuaternionX());
-    SmartDashboard.putNumber("QuaternionY", ahrs.getQuaternionY());
-    SmartDashboard.putNumber("QuaternionZ", ahrs.getQuaternionZ());
+    //SmartDashboard.putNumber("QuaternionW", ahrs.getQuaternionW());
+    //SmartDashboard.putNumber("QuaternionX", ahrs.getQuaternionX());
+    //SmartDashboard.putNumber("QuaternionY", ahrs.getQuaternionY());
+    //SmartDashboard.putNumber("QuaternionZ", ahrs.getQuaternionZ());
 
     /* Sensor Data Timestamp */
-    SmartDashboard.putNumber("SensorTimestamp", ahrs.getLastSensorTimestamp());
+    //SmartDashboard.putNumber("SensorTimestamp", ahrs.getLastSensorTimestamp());
 
     /* Connectivity Debugging Support */
-    SmartDashboard.putNumber("IMU_Byte_Count", ahrs.getByteCount());
-    SmartDashboard.putNumber("IMU_Update_Count", ahrs.getUpdateCount());
+    //SmartDashboard.putNumber("IMU_Byte_Count", ahrs.getByteCount());
+    //SmartDashboard.putNumber("IMU_Update_Count", ahrs.getUpdateCount());
 
 
     this.weatherCan.update();
@@ -214,21 +235,21 @@ public class Robot extends TimedRobot {
     this.greenLight.set(false);
     this.amberLight.set(false);
 
-    // NavCAN.NavData navData = navCAN.getNavData();
-    // System.out.println(navData.toString());
+    NavCAN.NavData navData = navCAN.getNavData();
+    System.out.println(navData.toString());
   }
 
   @Override
   public void autonomousPeriodic() {
     this.greenLight.set(true);
     this.amberLight.set(false);
-
+/*
     NavCAN.NavData navData = navCAN.getNavData(); // TODO Alan+Francis here
     if (navData.spd_ovr == 1)
       this.drivebase.drive(new ChassisSpeeds(navData.y_spd, navData.x_spd, navData.z_spd), 1);
     else if (navData.spd_ovr == 0)
       this.drivebase.drive(WaypointSeeker.seek(navData), 1);
-
+*/
     this.drivebase.update();
   }
 
