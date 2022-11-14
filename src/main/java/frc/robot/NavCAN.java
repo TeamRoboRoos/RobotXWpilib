@@ -72,12 +72,14 @@ public class NavCAN {
     }
 
     public void print_bytes(byte[] bytes) {
+        /*
         System.out.print("bytes: ");
         for (byte b : bytes) {
             System.out.print(b);
             System.out.print(":");
         }
         System.out.println();
+        */
     }
 
     public void refresh_nav_data() {

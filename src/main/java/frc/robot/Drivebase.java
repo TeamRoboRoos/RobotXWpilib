@@ -42,7 +42,7 @@ public class Drivebase {
 
     public void drive(ChassisSpeeds chassisSpeeds, double thrust, DriveMode mode) {
         chassisSpeeds = speedTolerance(chassisSpeeds);
-
+        
         if (mode == DriveMode.SWERVE) {
             SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 

@@ -73,14 +73,14 @@ public class ShooterCanForComms {
           this.isShooting = true;
         }
         
-        if (this.can.readPacketLatest(17, data)) {
-          System.out.println("Receiving start");
+        if (this.can.readPacketLatest(145, data)) {
+          System.out.println("Received start");
           this.isEnabled = true;
         }
         
-        if (this.can.readPacketLatest(18, data)) {
+        if (this.can.readPacketLatest(146, data)) {
           this.isEnabled = false;
-          System.out.println("Receiving start");
+          System.out.println("Received stop");
         }
 /*
         can.readPacketLatest(34, data);

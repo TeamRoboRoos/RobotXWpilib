@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.PropulsionModule.PROPULSION_STATE;
+import frc.robot.subsystems.ShooterCanForComms;
+import frc.robot.subsystems.ShooterCanForReal;
 import frc.robot.subsystems.WeatherCan;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -94,12 +96,18 @@ public class Robot extends TimedRobot {
 
   private final NavCAN navCAN = new NavCAN(20); // XXX Nav CAN Device ID
 
+  private ShooterCanForComms shooterCan;
+  private ShooterCanForReal shooter;
+
   @Override
   public void robotInit() {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
     // m_rightMotor.setInverted(true);
+
+    this.shooter = new ShooterCanForReal();
+    this.shooterCan = new ShooterCanForComms(this.drivebase, this.shooter);
 
     CameraServer.startAutomaticCapture();
 
@@ -116,7 +124,7 @@ public class Robot extends TimedRobot {
        */
       ahrs = new AHRS(SPI.Port.kMXP);
     } catch (RuntimeException ex) {
-      System.out.println("Error instantiating navX MXP:  " + ex.getMessage());
+      //System.out.println("Error instantiating navX MXP:  " + ex.getMessage());
     }
 
     this.weatherCan = new WeatherCan();
@@ -228,6 +236,8 @@ public class Robot extends TimedRobot {
 
     this.weatherCan.update();
     this.weatherCan.displayData();
+    this.shooterCan.update();
+    this.shooterCan.displayData();
   }
 
   @Override
@@ -277,17 +287,22 @@ public class Robot extends TimedRobot {
     }
 
     double power = this.m_throtle.getX();
-
+/*
     System.out.println("" + power);
 
     System.out.println("" + m_stick.getX() + "x" + m_stick.getY() + " - " + deg);
     System.out.println("" + deg);
     System.out.println("" + power);
-
+*/
     if (m_stick.getRawButtonPressed(2)) {
       System.out.println("Initialising");
       // this.drivebase.setState(PROPULSION_STATE.UNINITIALISED);
       this.drivebase.initialise();
+    }
+
+    if (m_stick.getRawButtonPressed(1)) {
+      System.out.println("Shooter Enabled");
+      this.shooterCan.setEnabled(true);
     }
 
     if (this.drivebase.isState(PROPULSION_STATE.STOPPED) || this.drivebase.isState(PROPULSION_STATE.DRIVING)) {
